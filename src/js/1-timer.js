@@ -10,7 +10,8 @@ const hoursElement = document.querySelector('[data-hours]');
 const minutesElement = document.querySelector('[data-minutes]');
 const secondsElement = document.querySelector('[data-seconds]');
 
-startButton.disabled = true;
+let buttonClicked = false;
+startButton.addEventListener('click', handleStartButtonClick);
 
 const options = {
   enableTime: true,
@@ -19,17 +20,26 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     console.log(selectedDates[0]);
-    currentDifferenceDate(selectedDates[0]);
+    if (buttonClicked) {
+      currentDifferenceDate(selectedDates[0]);
+    }
   },
 };
 
 const datetimePicker = flatpickr(inputDatePicker, options);
 
+function handleStartButtonClick() {
+  const selectedDate = datetimePicker.selectedDates[0];
+  currentDifferenceDate(selectedDate);
+  buttonClicked = true;
+}
+
 function currentDifferenceDate(selectedDate) {
   const currentDate = Date.now();
   startButton.disabled = selectedDate < currentDate;
   if (selectedDate < currentDate) {
-    iziToast.error({message: 'Please choose a date in the future'});
+    iziToast.error({message: 'Please choose a date in the future',
+    position: 'topRight'});
   } else {
     inputDatePicker.disabled = true;
     startTimer(selectedDate - currentDate);
@@ -58,4 +68,4 @@ function renderDate(days, hours, minutes, seconds) {
   hoursElement.textContent = hours.toString().padStart(2, '0');
   minutesElement.textContent = minutes.toString().padStart(2, '0');
   secondsElement.textContent = seconds.toString().padStart(2, '0');
-}
+} 
