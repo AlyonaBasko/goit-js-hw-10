@@ -27,14 +27,18 @@ function handleSubmit(event) {
   promise.then(
     (delay) => {
       iziToast.success({
+        borderRadius: '4px',
+        backgroundColor: '#59a10d',
         message: `✅ Notification created after ${delay}ms`,
-        position: 'topLeft'
+        position: 'topRight'
       });
     },
     (delay) => {
       iziToast.error({
+        borderRadius: '4px',
+        backgroundColor: '#ef4040',
         message: `❌ Notification failed after ${delay}ms`,
-        position: 'topLeft'
+        position: 'topRight'
       });
     }
   );
