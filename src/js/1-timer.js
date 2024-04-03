@@ -10,7 +10,7 @@ const hoursElement = document.querySelector('[data-hours]');
 const minutesElement = document.querySelector('[data-minutes]');
 const secondsElement = document.querySelector('[data-seconds]');
 
-let timerInterval; 
+let countdownInterval;
 startButton.disabled = true;
 
 const options = {
@@ -19,7 +19,6 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
     currentDifferenceDate(selectedDates[0]);
   },
 };
@@ -40,13 +39,14 @@ function handleStartButtonClick() {
 function currentDifferenceDate(selectedDate) {
   if (!selectedDate || selectedDate < Date.now()) {
     startButton.disabled = true;
+    iziToast.error({ message: 'Please choose a date in the future', position: 'topRight' });
   } else {
     startButton.disabled = false;
   }
 }
 
 function startTimer(duration) {
-  clearInterval(timerInterval);
+  clearInterval(countdownInterval);
   let timer = duration / 1000;
   const intervalId = setInterval(function () {
     const days = Math.floor(timer / (3600 * 24));
