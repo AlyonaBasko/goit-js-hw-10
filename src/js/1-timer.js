@@ -10,8 +10,8 @@ const hoursElement = document.querySelector('[data-hours]');
 const minutesElement = document.querySelector('[data-minutes]');
 const secondsElement = document.querySelector('[data-seconds]');
 
-let buttonClicked = false;
-startButton.addEventListener('click', handleStartButtonClick);
+let timerInterval; 
+startButton.disabled = true;
 
 const options = {
   enableTime: true,
@@ -20,9 +20,7 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     console.log(selectedDates[0]);
-    if (buttonClicked) {
-      currentDifferenceDate(selectedDates[0]);
-    }
+    currentDifferenceDate(selectedDates[0]);
   },
 };
 
@@ -30,23 +28,25 @@ const datetimePicker = flatpickr(inputDatePicker, options);
 
 function handleStartButtonClick() {
   const selectedDate = datetimePicker.selectedDates[0];
-  currentDifferenceDate(selectedDate);
-  buttonClicked = true;
+  if (!selectedDate || selectedDate < Date.now()) {
+    iziToast.error({ message: 'Please choose a future date', position: 'topRight' });
+    return;
+  }
+  inputDatePicker.disabled = true;
+  startButton.disabled = true;
+  startTimer(selectedDate - Date.now());
 }
 
 function currentDifferenceDate(selectedDate) {
-  const currentDate = Date.now();
-  startButton.disabled = selectedDate < currentDate;
-  if (selectedDate < currentDate) {
-    iziToast.error({message: 'Please choose a date in the future',
-    position: 'topRight'});
+  if (!selectedDate || selectedDate < Date.now()) {
+    startButton.disabled = true;
   } else {
-    inputDatePicker.disabled = true;
-    startTimer(selectedDate - currentDate);
+    startButton.disabled = false;
   }
 }
 
 function startTimer(duration) {
+  clearInterval(timerInterval);
   let timer = duration / 1000;
   const intervalId = setInterval(function () {
     const days = Math.floor(timer / (3600 * 24));
@@ -59,6 +59,7 @@ function startTimer(duration) {
       renderDate(0, 0, 0, 0);
       iziToast.success({message: 'Countdown finished!'});
       inputDatePicker.disabled = false;
+      startButton.disabled = true;
     }
   }, 1000);
 }
@@ -69,3 +70,5 @@ function renderDate(days, hours, minutes, seconds) {
   minutesElement.textContent = minutes.toString().padStart(2, '0');
   secondsElement.textContent = seconds.toString().padStart(2, '0');
 } 
+
+startButton.addEventListener('click', handleStartButtonClick);
