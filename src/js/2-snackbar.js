@@ -24,22 +24,19 @@ function handleSubmit(event) {
     }, delay);
   });
 
-  promise.then(
-    (delay) => {
-      iziToast.success({
-        borderRadius: '4px',
-        backgroundColor: '#59a10d',
-        message: `✅ Notification created after ${delay}ms`,
-        position: 'topRight'
-      });
-    },
-    (delay) => {
-      iziToast.error({
-        borderRadius: '4px',
-        backgroundColor: '#ef4040',
-        message: `❌ Notification failed after ${delay}ms`,
-        position: 'topRight'
-      });
-    }
-  );
+  promise.then(delay => {
+    iziToast.success({
+      borderRadius: '4px',
+      backgroundColor: '#59a10d',
+      message: `✅ Fulfilled promise in ${delay}ms`,
+      position: 'topRight'
+    });
+  }).catch(delay => {
+    iziToast.error({
+      borderRadius: '4px',
+      backgroundColor: '#ef4040',
+      message: `❌ Rejected promise in ${delay}ms`,
+      position: 'topRight'
+    });
+  });
 }
